@@ -85,6 +85,10 @@ struct NewNoteView: View {
                                 .font(.body)
                                 .padding(.horizontal, 20)
                                 .padding(.top, 10)
+                                .onTapGesture {
+                                    // Ensure focus when tapped
+                                    isTextFieldFocused = true
+                                }
                                 .onChange(of: isTextFieldFocused) { oldValue, newValue in
                                     // When TextEditor loses focus (Done button pressed), save and close
                                     if !newValue && !noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -116,8 +120,8 @@ struct NewNoteView: View {
         .presentationBackground(.clear) // Make sheet background transparent
         .presentationBackgroundInteraction(.enabled) // Allow interaction with background
         .onAppear {
-            // Automatically focus text field to open keyboard
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            // Automatically focus text field to open keyboard with longer delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 isTextFieldFocused = true
             }
             
