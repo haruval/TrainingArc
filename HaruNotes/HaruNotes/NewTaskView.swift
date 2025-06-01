@@ -1,13 +1,15 @@
 import SwiftUI
 
-struct NewNoteView: View {
+struct NewTaskView: View {
     @EnvironmentObject var store: DataStore
     @Environment(\.dismiss) var dismiss
     @FocusState private var isTextFieldFocused: Bool
 
-    @State private var noteText: String = ""
+    @State private var taskText: String = ""
     @State private var dragOffset: CGFloat = 0
     @State private var keyboardHeight: CGFloat = 0
+    @State private var hasScheduledTime: Bool = false
+    @State private var scheduledTime: Date = Date()
 
     var body: some View {
         GeometryReader { geometry in
@@ -19,9 +21,9 @@ struct NewNoteView: View {
                 VStack(spacing: 0) {
                     Spacer() // Push glassy interface to bottom
                     
-                    // Glassy note entry interface
+                    // Glassy task entry interface
                     ZStack {
-                        // Glassy frosted background for the text entry area
+                        // Glassy frosted background for the task entry area
                         RoundedRectangle(cornerRadius: 20)
                             .fill(.ultraThinMaterial)
                             .overlay(
@@ -52,7 +54,7 @@ struct NewNoteView: View {
                                     .onEnded { gesture in
                                         if gesture.translation.height > 100 {
                                             // If dragged down more than 100 points, dismiss
-                                            saveNoteIfNotEmpty()
+                                            saveTaskIfNotEmpty()
                                             dismiss()
                                         } else {
                                             // Snap back
@@ -63,12 +65,12 @@ struct NewNoteView: View {
                                     }
                             )
                             
-                            // Note type indicator
+                            // Task type indicator
                             HStack {
-                                Image(systemName: "note.text")
-                                    .foregroundColor(.orange)
+                                Image(systemName: "checkmark.square")
+                                    .foregroundColor(.blue)
                                     .font(.title3)
-                                Text("New Note")
+                                Text("New Task")
                                     .font(.headline)
                                     .foregroundColor(.white)
                                 Spacer()
@@ -76,8 +78,36 @@ struct NewNoteView: View {
                             .padding(.horizontal, 20)
                             .padding(.bottom, 10)
                             
+                            // Time scheduling section
+                            VStack(spacing: 12) {
+                                // Toggle for time scheduling
+                                HStack {
+                                    Image(systemName: "clock")
+                                        .foregroundColor(.orange)
+                                        .font(.title3)
+                                    Text("Schedule Time")
+                                        .font(.subheadline)
+                                        .foregroundColor(.white)
+                                    Spacer()
+                                    Toggle("", isOn: $hasScheduledTime)
+                                        .toggleStyle(SwitchToggleStyle(tint: .blue))
+                                }
+                                .padding(.horizontal, 20)
+                                
+                                // Time picker (when enabled)
+                                if hasScheduledTime {
+                                    DatePicker("", selection: $scheduledTime, displayedComponents: .hourAndMinute)
+                                        .datePickerStyle(WheelDatePickerStyle())
+                                        .labelsHidden()
+                                        .colorScheme(.dark)
+                                        .scaleEffect(0.9)
+                                        .padding(.horizontal, 20)
+                                        .padding(.bottom, 10)
+                                }
+                            }
+                            
                             // Main text input area
-                            TextEditor(text: $noteText)
+                            TextEditor(text: $taskText)
                                 .focused($isTextFieldFocused)
                                 .scrollContentBackground(.hidden)
                                 .background(Color.clear)
@@ -87,14 +117,14 @@ struct NewNoteView: View {
                                 .padding(.top, 10)
                                 .onChange(of: isTextFieldFocused) { oldValue, newValue in
                                     // When TextEditor loses focus (Done button pressed), save and close
-                                    if !newValue && !noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                        saveNoteIfNotEmpty()
+                                    if !newValue && !taskText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                        saveTaskIfNotEmpty()
                                         dismiss()
                                     }
                                 }
                                 .onSubmit {
                                     // Fallback for enter key (though TextEditor typically doesn't use this)
-                                    saveNoteIfNotEmpty()
+                                    saveTaskIfNotEmpty()
                                     dismiss()
                                 }
                                 .submitLabel(.done)
@@ -104,7 +134,7 @@ struct NewNoteView: View {
                                 .frame(height: keyboardHeight > 0 ? 10 : 0)
                         }
                     }
-                    .frame(height: keyboardHeight > 0 ? max(300, geometry.size.height - keyboardHeight - 100) : geometry.size.height * 0.85) // Better height calculation
+                    .frame(height: keyboardHeight > 0 ? max(400, geometry.size.height - keyboardHeight - 50) : geometry.size.height * 0.85) // Increased height to accommodate time picker
                     .cornerRadius(20)
                     .offset(y: dragOffset)
                     // Position the interface above the keyboard while keeping drag bar visible
@@ -151,16 +181,17 @@ struct NewNoteView: View {
         }
     }
     
-    private func saveNoteIfNotEmpty() {
-        if !noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            store.addNote(title: "Quick Note", content: noteText)
+    private func saveTaskIfNotEmpty() {
+        if !taskText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            let timeToSave = hasScheduledTime ? scheduledTime : nil
+            store.addTask(title: "Task", content: taskText, scheduledTime: timeToSave)
         }
     }
 }
 
-struct NewNoteView_Previews: PreviewProvider {
+struct NewTaskView_Previews: PreviewProvider {
     static var previews: some View {
-        NewNoteView()
+        NewTaskView()
             .environmentObject(DataStore())
     }
 } 
