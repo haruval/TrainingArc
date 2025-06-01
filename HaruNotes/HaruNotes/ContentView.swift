@@ -11,6 +11,7 @@ struct ContentView: View {
     @StateObject var store = DataStore()
     @State private var showingNewNoteView = false
     @State private var showingNewTaskView = false
+    @State private var showingCalendarView = false
 
     var body: some View {
         NavigationView {
@@ -45,7 +46,7 @@ struct ContentView: View {
                         }
                     }
                     .padding(.horizontal)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 4)
                     
                     // Main content in a TabView for swipe navigation
                     TabView(selection: $store.currentPage) {
@@ -109,9 +110,31 @@ struct ContentView: View {
                     .padding(.bottom, 20)
                 }
             }
-            .navigationTitle("Training Arc")
             .navigationBarTitleDisplayMode(.large)
             .preferredColorScheme(.dark)
+            .navigationBarBackButtonHidden(false)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    HStack {
+                        Text("Training Arc")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            showingCalendarView = true
+                        }) {
+                            Image(systemName: "calendar")
+                                .foregroundColor(.yellow)
+                                .font(.title2)
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 30)
+                }
+            }
             .onAppear {
                 // Ensure we start at Today page
                 store.switchToPage(.today)
@@ -136,6 +159,10 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingNewTaskView) {
             NewTaskView()
+                .environmentObject(store)
+        }
+        .sheet(isPresented: $showingCalendarView) {
+            CalendarView()
                 .environmentObject(store)
         }
     }

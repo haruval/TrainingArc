@@ -90,6 +90,19 @@ class DataStore: ObservableObject {
         return formatter.string(from: page.date())
     }
     
+    // Public method to get date key for any date
+    func dateKey(for date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.string(from: date)
+    }
+    
+    // Public method to get day data for any date
+    func dayData(for date: Date) -> DayData {
+        let key = dateKey(for: date)
+        return dayDataStore[key] ?? DayData()
+    }
+    
     private func getCurrentDayData() -> DayData {
         let key = dateKey(for: currentPage)
         return dayDataStore[key] ?? DayData()
