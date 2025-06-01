@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct ProgressSectionView: View {
-    @State private var rrButtonStruck = false
-    @State private var workoutButtonStruck = false
+    @EnvironmentObject var store: DataStore
 
     var body: some View {
         Section {
@@ -17,16 +16,16 @@ struct ProgressSectionView: View {
                 // +20rr button
                 Button(action: {
                     withAnimation {
-                        rrButtonStruck.toggle()
+                        store.rrButtonStruck.toggle()
                     }
                 }) {
                     Text("+20rr")
                         .font(.headline)
-                        .foregroundColor(rrButtonStruck ? .black : .white)
-                        .strikethrough(rrButtonStruck)
+                        .foregroundColor(store.rrButtonStruck ? .black : .white)
+                        .strikethrough(store.rrButtonStruck)
                         .frame(maxWidth: .infinity, minHeight: 50)
                         .background(
-                            rrButtonStruck ? Color.yellow : Color.clear,
+                            store.rrButtonStruck ? Color.yellow : Color.clear,
                             in: RoundedRectangle(cornerRadius: 12)
                         )
                         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
@@ -40,16 +39,16 @@ struct ProgressSectionView: View {
                 // worked out button
                 Button(action: {
                     withAnimation {
-                        workoutButtonStruck.toggle()
+                        store.workoutButtonStruck.toggle()
                     }
                 }) {
                     Text("worked out")
                         .font(.headline)
                         .foregroundColor(.white)
-                        .strikethrough(workoutButtonStruck)
+                        .strikethrough(store.workoutButtonStruck)
                         .frame(maxWidth: .infinity, minHeight: 50)
                         .background(
-                            workoutButtonStruck ? Color.blue : Color.clear,
+                            store.workoutButtonStruck ? Color.blue : Color.clear,
                             in: RoundedRectangle(cornerRadius: 12)
                         )
                         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
