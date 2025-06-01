@@ -114,25 +114,20 @@ struct ContentView: View {
             .preferredColorScheme(.dark)
             .navigationBarBackButtonHidden(false)
             .toolbar {
-                ToolbarItem(placement: .principal) {
-                    HStack {
-                        Text("Training Arc")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            showingCalendarView = true
-                        }) {
-                            Image(systemName: "calendar")
-                                .foregroundColor(.yellow)
-                                .font(.title2)
-                        }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Text("Training Arc")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showingCalendarView = true
+                    }) {
+                        Image(systemName: "calendar")
+                            .foregroundColor(.yellow)
+                            .font(.title2)
                     }
-                    .padding(.horizontal)
-                    .padding(.top, 0)
                 }
             }
             .onAppear {
@@ -318,41 +313,56 @@ struct TaskDetailView: View {
             Color.black.edgesIgnoringSafeArea(.all)
             
             VStack(alignment: .leading, spacing: 16) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Description")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                    Text(task.content)
-                        .foregroundColor(.gray)
-                }
-                
-                if let scheduledTime = task.scheduledTime {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Scheduled Time")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                        HStack {
-                            Image(systemName: "clock")
-                                .foregroundColor(.orange)
-                            Text(scheduledTime, style: .time)
-                                .foregroundColor(.orange)
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Description")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                            Text(task.content)
+                                .foregroundColor(.gray)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
+                        
+                        if let scheduledTime = task.scheduledTime {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Scheduled Time")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                HStack {
+                                    Image(systemName: "clock")
+                                        .foregroundColor(.orange)
+                                    Text(scheduledTime, style: .time)
+                                        .foregroundColor(.orange)
+                                }
+                            }
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Status")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                            HStack {
+                                Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                                    .foregroundColor(task.isCompleted ? .green : .gray)
+                                Text(task.isCompleted ? "Completed" : "Pending")
+                                    .foregroundColor(task.isCompleted ? .green : .gray)
+                            }
+                        }
+                        
+                        Spacer()
+                        
+                        // Delete button in bottom left
+                        Button("Delete Task") {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                store.deleteTask(task)
+                            }
+                            dismiss()
+                        }
+                        .foregroundColor(.red)
                     }
+                    Spacer()
                 }
-                
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Status")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                    HStack {
-                        Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
-                            .foregroundColor(task.isCompleted ? .green : .gray)
-                        Text(task.isCompleted ? "Completed" : "Pending")
-                            .foregroundColor(task.isCompleted ? .green : .gray)
-                    }
-                }
-                
-                Spacer()
             }
             .padding()
             
@@ -388,20 +398,6 @@ struct TaskDetailView: View {
         .navigationTitle(task.title)
         .navigationBarTitleDisplayMode(.inline)
         .preferredColorScheme(.dark)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                        store.deleteTask(task)
-                    }
-                    dismiss()
-                }) {
-                    Image(systemName: "trash")
-                        .foregroundColor(.yellow)
-                        .font(.title3)
-                }
-            }
-        }
     }
 }
 
