@@ -20,7 +20,7 @@ struct ContentView: View {
                 
                 VStack(spacing: 0) {
                     // Page indicator and date display
-                    VStack(spacing: 8) {
+                    VStack(spacing: 6) {
                         // Page indicator dots
                         HStack(spacing: 12) {
                             ForEach(DatePage.allCases, id: \.self) { page in
@@ -46,7 +46,7 @@ struct ContentView: View {
                         }
                     }
                     .padding(.horizontal)
-                    .padding(.bottom, 4)
+                    .padding(.bottom, 2)
                     
                     // Main content in a TabView for swipe navigation
                     TabView(selection: $store.currentPage) {
@@ -132,7 +132,7 @@ struct ContentView: View {
                         }
                     }
                     .padding(.horizontal)
-                    .padding(.top, 30)
+                    .padding(.top, 0)
                 }
             }
             .onAppear {
@@ -316,6 +316,7 @@ struct TaskDetailView: View {
     var body: some View {
         ZStack {
             Color.black.edgesIgnoringSafeArea(.all)
+            
             VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Description")
@@ -352,38 +353,55 @@ struct TaskDetailView: View {
                 }
                 
                 Spacer()
+            }
+            .padding()
+            
+            // Floating completion toggle button
+            VStack {
+                Spacer()
                 
-                VStack(spacing: 12) {
-                    Button(task.isCompleted ? "Mark as Pending" : "Mark as Completed") {
+                HStack {
+                    Spacer()
+                    
+                    Button(action: {
                         withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                             store.toggleTask(task)
                         }
+                    }) {
+                        Image(systemName: task.isCompleted ? "arrow.uturn.backward" : "checkmark")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                            .frame(width: 56, height: 56)
+                            .background(.ultraThinMaterial, in: Circle())
+                            .overlay(
+                                Circle()
+                                    .stroke(task.isCompleted ? Color.orange.opacity(0.3) : Color.green.opacity(0.3), lineWidth: 1)
+                            )
+                            .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 5)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(task.isCompleted ? Color.orange : Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
                     
-                    Button("Delete Task") {
-                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                            store.deleteTask(task)
-                        }
-                        dismiss()
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.red)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
+                    Spacer()
                 }
-                .padding(.bottom)
+                .padding(.bottom, 30)
             }
-            .padding()
         }
         .navigationTitle(task.title)
         .navigationBarTitleDisplayMode(.inline)
         .preferredColorScheme(.dark)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        store.deleteTask(task)
+                    }
+                    dismiss()
+                }) {
+                    Image(systemName: "trash")
+                        .foregroundColor(.yellow)
+                        .font(.title3)
+                }
+            }
+        }
     }
 }
 
