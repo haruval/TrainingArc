@@ -9,15 +9,11 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject var store = NotesStore()
-    @State private var newNoteViewOffset: CGFloat = UIScreen.main.bounds.height * 0.8 // Show bottom 20%
-    @State private var isNewNoteViewPresented = false
-
-    private let pullUpThreshold: CGFloat = 50 // How much user needs to swipe up to fully open
-    private let partialHeight = UIScreen.main.bounds.height * 0.2 // 20% visible at bottom
+    @State private var showingNewNoteView = false
 
     var body: some View {
         NavigationView {
-            ZStack(alignment: .bottom) {
+            ZStack {
                 Color.black.edgesIgnoringSafeArea(.all) // Black background
 
                 List {
@@ -39,51 +35,28 @@ struct ContentView: View {
                 .navigationTitle("HaruNotes")
                 .navigationBarTitleDisplayMode(.large)
                 .preferredColorScheme(.dark) // Ensures navigation bar elements are light
-                .padding(.bottom, partialHeight) // Add padding to prevent list items from being hidden behind the partial view
 
-                // Slide-up NewNoteView (always partially visible)
-                VStack(spacing: 0) {
-                    NewNoteView(isPresented: $isNewNoteViewPresented, offset: $newNoteViewOffset)
-                        .environmentObject(store)
-                        .frame(height: UIScreen.main.bounds.height * 0.8) // Full height when expanded
-                        .gesture(
-                            DragGesture()
-                                .onChanged { gesture in
-                                    let newOffset = newNoteViewOffset + gesture.translation.height
-                                    // Constrain the offset between 0 (fully open) and 80% (20% visible)
-                                    let constrainedOffset = max(0, min(UIScreen.main.bounds.height * 0.8, newOffset))
-                                    self.newNoteViewOffset = constrainedOffset
-                                }
-                                .onEnded { gesture in
-                                    withAnimation(.spring()) {
-                                        if gesture.translation.height < -pullUpThreshold {
-                                            // Swiped up significantly, fully open
-                                            self.newNoteViewOffset = 0
-                                            isNewNoteViewPresented = true
-                                        } else if gesture.translation.height > pullUpThreshold {
-                                            // Swiped down significantly, return to partial view
-                                            self.newNoteViewOffset = UIScreen.main.bounds.height * 0.8
-                                            isNewNoteViewPresented = false
-                                        } else {
-                                            // Small swipe, snap to nearest position
-                                            if newNoteViewOffset < UIScreen.main.bounds.height * 0.4 {
-                                                // Closer to fully open
-                                                self.newNoteViewOffset = 0
-                                                isNewNoteViewPresented = true
-                                            } else {
-                                                // Closer to partial view
-                                                self.newNoteViewOffset = UIScreen.main.bounds.height * 0.8
-                                                isNewNoteViewPresented = false
-                                            }
-                                        }
-                                    }
-                                }
-                        )
+                // Floating button positioned slightly below center
+                VStack {
+                    Spacer()
+                    Spacer() // This creates the "slightly below center" positioning
+                    
+                    Button(action: {
+                        showingNewNoteView = true
+                    }) {
+                        Image(systemName: "plus")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                            .frame(width: 56, height: 56)
+                            .background(Color.green)
+                            .clipShape(Circle())
+                            .shadow(color: .green.opacity(0.3), radius: 10, x: 0, y: 5)
+                    }
+                    
+                    Spacer()
+                    Spacer()
+                    Spacer()
                 }
-                .background(Color.clear) // Ensure the VStack itself doesn't block underlying views
-                .offset(y: newNoteViewOffset)
-                .edgesIgnoringSafeArea(.bottom) // Allow it to go to the very bottom
-                .zIndex(1) // Ensure it's above the list
             }
             .onAppear {
                  // Customize navigation bar appearance
@@ -100,6 +73,10 @@ struct ContentView: View {
             }
         }
         .accentColor(.white) // For NavigationView controls like back button
+        .sheet(isPresented: $showingNewNoteView) {
+            NewNoteView()
+                .environmentObject(store)
+        }
     }
 }
 
