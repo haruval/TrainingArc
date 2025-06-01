@@ -7,7 +7,7 @@ class DataStore: ObservableObject {
     init() {
         // Sample notes
         notes = [
-            Note(title: "Welcome to Moss", content: "This is your new notes and task management app. Stay organized and productive!"),
+            Note(title: "Welcome to Training Arc", content: "This is your new notes and task management app. Stay organized and productive!"),
             Note(title: "Meeting Notes", content: "Discussed project timeline and deliverables. Next steps: review mockups and finalize requirements."),
             Note(title: "Ideas", content: "App features to consider: dark mode, cloud sync, reminders, categories.")
         ]

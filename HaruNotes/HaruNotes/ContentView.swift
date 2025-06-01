@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  HaruNotes
+//  TrainingArc
 //
 //  Created by Ari Gladstone on 5/31/25.
 //
@@ -15,9 +15,12 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color.black.edgesIgnoringSafeArea(.all) // Black background
+                Color.black.edgesIgnoringSafeArea(.all)
 
                 List {
+                    // Progress Section
+                    ProgressSectionView()
+                    
                     // Tasks Section
                     if !store.tasks.isEmpty {
                         Section {
@@ -109,7 +112,7 @@ struct ContentView: View {
                         }
                     }
                 }
-                .navigationTitle("Moss")
+                .navigationTitle("Training Arc")
                 .navigationBarTitleDisplayMode(.large)
                 .preferredColorScheme(.dark)
 
@@ -154,7 +157,7 @@ struct ContentView: View {
                         
                         Spacer()
                     }
-                    .padding(.bottom, 100)
+                    .padding(.bottom, 20)
                 }
             }
             .onAppear {
