@@ -54,7 +54,6 @@ struct NewTaskView: View {
                                     .onEnded { gesture in
                                         if gesture.translation.height > 100 {
                                             // If dragged down more than 100 points, dismiss
-                                            saveTaskIfNotEmpty()
                                             dismiss()
                                         } else {
                                             // Snap back
@@ -65,7 +64,7 @@ struct NewTaskView: View {
                                     }
                             )
                             
-                            // Task type indicator
+                            // Task type indicator with save button
                             HStack {
                                 Image(systemName: "checkmark.square")
                                     .foregroundColor(.blue)
@@ -74,6 +73,18 @@ struct NewTaskView: View {
                                     .font(.headline)
                                     .foregroundColor(.white)
                                 Spacer()
+                                
+                                // Green checkmark save button
+                                Button(action: {
+                                    saveTaskIfNotEmpty()
+                                    dismiss()
+                                }) {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(.green)
+                                        .font(.title2)
+                                        .fontWeight(.semibold)
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
                             .padding(.horizontal, 20)
                             .padding(.bottom, 10)
@@ -93,6 +104,7 @@ struct NewTaskView: View {
                                         .toggleStyle(SwitchToggleStyle(tint: .blue))
                                 }
                                 .padding(.horizontal, 20)
+                                .padding(.top, 16)
                                 
                                 // Time picker (when enabled)
                                 if hasScheduledTime {
@@ -119,19 +131,6 @@ struct NewTaskView: View {
                                     // Ensure focus when tapped
                                     isTextFieldFocused = true
                                 }
-                                .onChange(of: isTextFieldFocused) { oldValue, newValue in
-                                    // When TextEditor loses focus (Done button pressed), save and close
-                                    if !newValue && !taskText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                        saveTaskIfNotEmpty()
-                                        dismiss()
-                                    }
-                                }
-                                .onSubmit {
-                                    // Fallback for enter key (though TextEditor typically doesn't use this)
-                                    saveTaskIfNotEmpty()
-                                    dismiss()
-                                }
-                                .submitLabel(.done)
                             
                             // Bottom spacer to accommodate keyboard
                             Spacer()

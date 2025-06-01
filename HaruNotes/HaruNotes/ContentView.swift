@@ -243,7 +243,7 @@ struct DayContentView: View {
                                     .frame(width: 30)
                                 
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text(note.title)
+                                    Text(firstFourWords(from: note.content))
                                         .font(.headline)
                                         .foregroundColor(.white)
                                     Text(note.content)
@@ -285,6 +285,7 @@ struct NoteDetailView: View {
                 Text(note.content)
                     .padding()
                     .foregroundColor(.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 Spacer()
                 
                 Button("Delete Note") {
@@ -405,4 +406,12 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
+}
+
+// Helper function to get first four words from content
+private func firstFourWords(from content: String) -> String {
+    let words = content.components(separatedBy: .whitespacesAndNewlines)
+        .filter { !$0.isEmpty }
+    let firstFour = Array(words.prefix(4))
+    return firstFour.joined(separator: " ")
 }

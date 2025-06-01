@@ -52,7 +52,6 @@ struct NewNoteView: View {
                                     .onEnded { gesture in
                                         if gesture.translation.height > 100 {
                                             // If dragged down more than 100 points, dismiss
-                                            saveNoteIfNotEmpty()
                                             dismiss()
                                         } else {
                                             // Snap back
@@ -63,7 +62,7 @@ struct NewNoteView: View {
                                     }
                             )
                             
-                            // Note type indicator
+                            // Note type indicator with save button
                             HStack {
                                 Image(systemName: "note.text")
                                     .foregroundColor(.orange)
@@ -72,6 +71,18 @@ struct NewNoteView: View {
                                     .font(.headline)
                                     .foregroundColor(.white)
                                 Spacer()
+                                
+                                // Green checkmark save button
+                                Button(action: {
+                                    saveNoteIfNotEmpty()
+                                    dismiss()
+                                }) {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(.green)
+                                        .font(.title2)
+                                        .fontWeight(.semibold)
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
                             .padding(.horizontal, 20)
                             .padding(.bottom, 10)
@@ -89,19 +100,6 @@ struct NewNoteView: View {
                                     // Ensure focus when tapped
                                     isTextFieldFocused = true
                                 }
-                                .onChange(of: isTextFieldFocused) { oldValue, newValue in
-                                    // When TextEditor loses focus (Done button pressed), save and close
-                                    if !newValue && !noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                        saveNoteIfNotEmpty()
-                                        dismiss()
-                                    }
-                                }
-                                .onSubmit {
-                                    // Fallback for enter key (though TextEditor typically doesn't use this)
-                                    saveNoteIfNotEmpty()
-                                    dismiss()
-                                }
-                                .submitLabel(.done)
                             
                             // Bottom spacer to accommodate keyboard
                             Spacer()
