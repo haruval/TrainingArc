@@ -31,7 +31,7 @@ struct ContentView: View {
                         // App title with glow effect
                         HStack {
                             Text("Training Arc")
-                                .font(.system(size: 28, weight: .light, design: .rounded))
+                                .font(.system(size: 28, weight: .semibold, design: .rounded))
                                 .foregroundStyle(
                                     LinearGradient(
                                         colors: [.white, .cyan.opacity(0.8)],
@@ -691,8 +691,7 @@ struct InfoView: View {
                             
                             // Title
                             Text("About")
-                                .font(.title2)
-                                .fontWeight(.bold)
+                                .font(.system(size: 28, weight: .semibold, design: .rounded))
                                 .foregroundStyle(
                                     LinearGradient(
                                         colors: [.white, .blue.opacity(0.8)],
