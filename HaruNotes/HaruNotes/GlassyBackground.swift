@@ -1,5 +1,23 @@
 import SwiftUI
 
+// MARK: - Color Schemes for Different Pages
+struct PageColorScheme {
+    static func colors(for page: DatePage) -> [Color] {
+        switch page {
+        case .yesterday:
+            return [.orange, .red, .blue, .indigo]
+        case .today:
+            return [.blue, .cyan, .green, .teal]
+        case .tomorrow:
+            return [.pink, .red, .orange, .yellow]
+        }
+    }
+    
+    static func calendarColors() -> [Color] {
+        return [.cyan, .blue, .purple, .indigo]
+    }
+}
+
 // MARK: - Glassy Background Components
 struct GlassyBackground: View {
     let colors: [Color]
@@ -9,6 +27,18 @@ struct GlassyBackground: View {
     
     init(colors: [Color] = [.purple, .blue, .cyan, .teal], intensity: Double = 0.6) {
         self.colors = colors
+        self.intensity = intensity
+    }
+    
+    // Convenience initializer for pages
+    init(page: DatePage, intensity: Double = 0.6) {
+        self.colors = PageColorScheme.colors(for: page)
+        self.intensity = intensity
+    }
+    
+    // Convenience initializer for calendar
+    init(forCalendar: Bool, intensity: Double = 0.6) {
+        self.colors = PageColorScheme.calendarColors()
         self.intensity = intensity
     }
     

@@ -18,9 +18,9 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                // Beautiful ambient glassy background with gentle lighting
+                // Beautiful ambient glassy background with page-specific colors
                 GlassyBackground(
-                    colors: [.purple, .blue, .cyan, .indigo],
+                    page: store.currentPage,
                     intensity: 0.4  // Subtle ambient gradient
                 )
                 
@@ -547,30 +547,15 @@ struct NoteDetailView: View {
                         // Note content in beautiful glassy card
                         if !note.content.isEmpty {
                             GlassyCard(cornerRadius: 20) {
-                                VStack(alignment: .leading, spacing: 16) {
-                                    HStack {
-                                        Text("Content")
-                                            .font(.headline)
-                                            .foregroundColor(.white)
-                                        
-                                        Spacer()
-                                        
-                                        // Word count
-                                        Text("\(note.content.split(separator: " ").count) words")
-                                            .font(.caption)
-                                            .foregroundColor(.gray)
-                                    }
-                                    
-                                    ScrollView {
-                                        Text(note.content)
-                                            .font(.body)
-                                            .foregroundColor(.white.opacity(0.9))
-                                            .lineSpacing(6)
-                                            .multilineTextAlignment(.leading)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                    }
-                                    .frame(maxHeight: 400)
+                                ScrollView {
+                                    Text(note.content)
+                                        .font(.body)
+                                        .foregroundColor(.white.opacity(0.9))
+                                        .lineSpacing(6)
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                 }
+                                .frame(maxHeight: 400)
                                 .padding(24)
                             }
                             .padding(.horizontal, 20)
@@ -579,48 +564,26 @@ struct NoteDetailView: View {
                             .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.4), value: isVisible)
                         }
                         
-                        // Note metadata
-                        GlassyCard(cornerRadius: 16) {
-                            VStack(alignment: .leading, spacing: 12) {
-                                HStack {
-                                    Image(systemName: "info.circle")
-                                        .foregroundColor(.cyan)
-                                    Text("Note Info")
-                                        .font(.headline)
-                                        .foregroundColor(.white)
-                                    Spacer()
-                                }
-                                
-                                VStack(alignment: .leading, spacing: 8) {
-                                    HStack {
-                                        Text("Created:")
-                                            .foregroundColor(.gray)
-                                        Spacer()
-                                        Text(note.dateCreated, style: .date)
-                                            .foregroundColor(.white)
-                                    }
-                                    
-                                    HStack {
-                                        Text("Time:")
-                                            .foregroundColor(.gray)
-                                        Spacer()
-                                        Text(note.dateCreated, style: .time)
-                                            .foregroundColor(.white)
-                                    }
-                                    
-                                    HStack {
-                                        Text("Characters:")
-                                            .foregroundColor(.gray)
-                                        Spacer()
-                                        Text("\(note.content.count)")
-                                            .foregroundColor(.white)
-                                    }
-                                }
-                                .font(.subheadline)
+                        // Simple note metadata at bottom
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Text("Created:")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text(note.dateCreated, style: .date)
+                                    .foregroundColor(.white)
                             }
-                            .padding(20)
+                            
+                            HStack {
+                                Text("Time:")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text(note.dateCreated, style: .time)
+                                    .foregroundColor(.white)
+                            }
                         }
-                        .padding(.horizontal, 20)
+                        .font(.subheadline)
+                        .padding(.horizontal, 24)
                         .opacity(isVisible ? 1.0 : 0.0)
                         .offset(y: isVisible ? 0 : 30)
                         .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.5), value: isVisible)
