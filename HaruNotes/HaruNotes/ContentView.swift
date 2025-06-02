@@ -12,6 +12,7 @@ struct ContentView: View {
     @State private var showingNewNoteView = false
     @State private var showingNewTaskView = false
     @State private var showingCalendarView = false
+    @State private var showingInfoView = false
     @State private var currentPageVisible = true
     @State private var dragOffset: CGFloat = 0
 
@@ -40,6 +41,23 @@ struct ContentView: View {
                                 )
                             
                             Spacer()
+                            
+                            // Info button with glassy design
+                            Button(action: {
+                                withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                                    showingInfoView = true
+                                }
+                            }) {
+                                Image(systemName: "info.circle")
+                                    .font(.title2)
+                                    .foregroundColor(.white)
+                                    .frame(width: 44, height: 44)
+                                    .background(.ultraThinMaterial, in: Circle())
+                                    .overlay(
+                                        Circle()
+                                            .stroke(.white.opacity(0.3), lineWidth: 1)
+                                    )
+                            }
                             
                             // Calendar button with glassy design
                             Button(action: {
@@ -251,6 +269,9 @@ struct ContentView: View {
         .sheet(isPresented: $showingCalendarView) {
             CalendarView()
                 .environmentObject(store)
+        }
+        .sheet(isPresented: $showingInfoView) {
+            InfoView()
         }
     }
     
@@ -593,6 +614,182 @@ struct NoteDetailView: View {
                             .frame(height: 50)
                     }
                 }
+            }
+            .scrollIndicators(.hidden)
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                        dismiss()
+                    }
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "chevron.left")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                        Text("Back")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.ultraThinMaterial, in: Capsule())
+                    .overlay(
+                        Capsule()
+                            .stroke(.white.opacity(0.3), lineWidth: 1)
+                    )
+                }
+            }
+        }
+        .onAppear {
+            withAnimation(.spring(response: 0.8, dampingFraction: 0.8)) {
+                isVisible = true
+            }
+        }
+    }
+}
+
+// MARK: - Info View
+struct InfoView: View {
+    @Environment(\.dismiss) var dismiss
+    @State private var isVisible = false
+    
+    var body: some View {
+        NavigationView {
+            ZStack {
+                // Beautiful ambient glassy background
+                GlassyBackground(
+                    colors: [.blue, .cyan, .teal, .green],
+                    intensity: 0.3
+                )
+                
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        // Header with elegant styling
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                // Info icon with glow
+                                ZStack {
+                                    Circle()
+                                        .fill(.blue.opacity(0.3))
+                                        .frame(width: 44, height: 44)
+                                    
+                                    Image(systemName: "info.circle")
+                                        .foregroundColor(.blue)
+                                        .font(.title3)
+                                        .fontWeight(.semibold)
+                                }
+                                .scaleEffect(isVisible ? 1.0 : 0.8)
+                                .opacity(isVisible ? 1.0 : 0.0)
+                                .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.1), value: isVisible)
+                                
+                                Spacer()
+                            }
+                            
+                            // Title
+                            Text("About")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [.white, .blue.opacity(0.8)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .opacity(isVisible ? 1.0 : 0.0)
+                                .offset(y: isVisible ? 0 : -20)
+                                .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.3), value: isVisible)
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.top, 20)
+                        
+                        // Main content in beautiful glassy card
+                        GlassyCard(cornerRadius: 20) {
+                            VStack(alignment: .leading, spacing: 20) {
+                                // Creator info
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Text("Created by Michael Ari Gladstone, or \"haru\" on the internet.")
+                                        .font(.body)
+                                        .foregroundColor(.white.opacity(0.9))
+                                        .lineSpacing(4)
+                                    
+                                    Text("CS + CTD student at CU Boulder.")
+                                        .font(.body)
+                                        .foregroundColor(.white.opacity(0.9))
+                                        .lineSpacing(4)
+                                }
+                                
+                                Divider()
+                                    .background(.white.opacity(0.2))
+                                
+                                // App story
+                                Text("This summer I decided to fix the three main problems with myself: I was a washed radiant, I was fat, and I had no projects on my portfolio. I created this app to keep myself accountable, be something I would actually use daily to help stay organized, and teach myself SwiftUI.")
+                                    .font(.body)
+                                    .foregroundColor(.white.opacity(0.9))
+                                    .lineSpacing(6)
+                            }
+                            .padding(24)
+                        }
+                        .padding(.horizontal, 20)
+                        .opacity(isVisible ? 1.0 : 0.0)
+                        .offset(y: isVisible ? 0 : 30)
+                        .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.4), value: isVisible)
+                        
+                        // Social media links section
+                        GlassyCard(cornerRadius: 20) {
+                            VStack(alignment: .leading, spacing: 20) {
+                                Text("Connect")
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.white)
+                                
+                                // Social media buttons in flowing layout
+                                VStack(spacing: 16) {
+                                    HStack(spacing: 16) {
+                                        SocialMediaButton(
+                                            label: "Twitter",
+                                            color: .blue,
+                                            url: "https://twitter.com/haruval"
+                                        )
+                                        
+                                        SocialMediaButton(
+                                            label: "YouTube",
+                                            color: .red,
+                                            url: "https://youtube.com/@haruval"
+                                        )
+                                    }
+                                    
+                                    HStack(spacing: 16) {
+                                        SocialMediaButton(
+                                            label: "Twitch",
+                                            color: .purple,
+                                            url: "https://twitch.tv/harumilktea"
+                                        )
+                                        
+                                        SocialMediaButton(
+                                            label: "Website",
+                                            color: .green,
+                                            url: "https://1haru.com"
+                                        )
+                                    }
+                                }
+                            }
+                            .padding(24)
+                        }
+                        .padding(.horizontal, 20)
+                        .opacity(isVisible ? 1.0 : 0.0)
+                        .offset(y: isVisible ? 0 : 30)
+                        .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.5), value: isVisible)
+                        
+                        // Bottom spacing
+                        Spacer()
+                            .frame(height: 50)
+                    }
+                }
                 .scrollIndicators(.hidden)
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -629,6 +826,54 @@ struct NoteDetailView: View {
             }
         }
         .preferredColorScheme(.dark)
+    }
+}
+
+// MARK: - Social Media Button Component
+struct SocialMediaButton: View {
+    let label: String
+    let color: Color
+    let url: String
+    @State private var isPressed = false
+    
+    var body: some View {
+        Button(action: {
+            if let url = URL(string: url) {
+                UIApplication.shared.open(url)
+            }
+        }) {
+            Text(label)
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundColor(.white)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: 25)
+                        .fill(.ultraThinMaterial)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 25)
+                                .stroke(color.opacity(0.4), lineWidth: 1.5)
+                        )
+                        .shadow(color: color.opacity(0.3), radius: isPressed ? 5 : 15, x: 0, y: isPressed ? 2 : 8)
+                        .scaleEffect(isPressed ? 0.95 : 1.0)
+                )
+        }
+        .buttonStyle(PlainButtonStyle())
+        .onTapGesture {
+            withAnimation(.easeInOut(duration: 0.1)) {
+                isPressed = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation(.easeInOut(duration: 0.1)) {
+                    isPressed = false
+                }
+            }
+            // Add haptic feedback
+            let impactFeedback = UIImpactFeedbackGenerator(style: .light)
+            impactFeedback.impactOccurred()
+        }
     }
 }
 
