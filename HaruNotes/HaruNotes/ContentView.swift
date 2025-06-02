@@ -21,7 +21,7 @@ struct ContentView: View {
                 // Beautiful ambient glassy background with gentle lighting
                 GlassyBackground(
                     colors: [.purple, .blue, .cyan, .indigo],
-                    intensity: 0.15  // Much more subtle
+                    intensity: 0.4  // Subtle ambient gradient
                 )
                 
                 VStack(spacing: 0) {

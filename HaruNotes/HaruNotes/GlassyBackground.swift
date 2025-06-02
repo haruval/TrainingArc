@@ -5,9 +5,9 @@ struct GlassyBackground: View {
     let colors: [Color]
     let intensity: Double
     @State private var animateGradient = false
-    @State private var fadePhase: Double = 0
+    @State private var colorPhase: Double = 0
     
-    init(colors: [Color] = [.purple, .blue, .cyan, .teal], intensity: Double = 0.4) {
+    init(colors: [Color] = [.purple, .blue, .cyan, .teal], intensity: Double = 0.6) {
         self.colors = colors
         self.intensity = intensity
     }
@@ -18,112 +18,92 @@ struct GlassyBackground: View {
             Color.black
                 .ignoresSafeArea()
             
-            // Simple but beautiful aurora-inspired background
-            SimpleAuroraBackground(colors: colors, intensity: intensity, animateGradient: animateGradient, fadePhase: fadePhase)
+            // Simple ambient shifting gradient
+            AmbientGradientBackground(colors: colors, intensity: intensity, animateGradient: animateGradient, colorPhase: colorPhase)
                 .onAppear {
-                    // Continuous flowing animation for aurora movement
-                    withAnimation(.easeInOut(duration: 15).repeatForever(autoreverses: true)) {
+                    // Slow gradient position animation
+                    withAnimation(.easeInOut(duration: 20).repeatForever(autoreverses: true)) {
                         animateGradient.toggle()
                     }
                     
-                    // Continuous intensity pulsing for aurora brightness
-                    withAnimation(.easeInOut(duration: 6).repeatForever(autoreverses: true)) {
-                        fadePhase = 1.0
+                    // Slow color shifting animation
+                    withAnimation(.easeInOut(duration: 25).repeatForever(autoreverses: true)) {
+                        colorPhase = 1.0
                     }
                 }
         }
     }
 }
 
-struct SimpleAuroraBackground: View {
+struct AmbientGradientBackground: View {
     let colors: [Color]
     let intensity: Double
     let animateGradient: Bool
-    let fadePhase: Double
+    let colorPhase: Double
     
     var body: some View {
         ZStack {
-            // Primary aurora flows
-            ForEach(0..<4, id: \.self) { index in
-                let color1 = colors[index % colors.count]
-                let color2 = colors[(index + 1) % colors.count]
-                
-                SimpleAuroraFlow(
-                    color1: color1,
-                    color2: color2,
-                    intensity: intensity,
-                    index: index,
-                    animateGradient: animateGradient,
-                    fadePhase: fadePhase
-                )
-            }
+            // Primary shifting gradient
+            RadialGradient(
+                colors: [
+                    interpolateColor(colors[0], colors[1], phase: colorPhase).opacity(intensity * 0.8),
+                    interpolateColor(colors[1], colors[2], phase: colorPhase).opacity(intensity * 0.6),
+                    interpolateColor(colors[2], colors[0], phase: colorPhase).opacity(intensity * 0.4),
+                    Color.clear
+                ],
+                center: animateGradient ? .topLeading : .bottomTrailing,
+                startRadius: 100,
+                endRadius: 800
+            )
             
-            // Atmospheric glow
-            SimpleAtmosphericGlow(colors: colors, intensity: intensity, fadePhase: fadePhase)
+            // Secondary gradient for depth
+            RadialGradient(
+                colors: [
+                    interpolateColor(colors[2], colors[3], phase: colorPhase).opacity(intensity * 0.5),
+                    interpolateColor(colors[3], colors[1], phase: colorPhase).opacity(intensity * 0.3),
+                    Color.clear
+                ],
+                center: animateGradient ? .bottomTrailing : .topLeading,
+                startRadius: 150,
+                endRadius: 600
+            )
+            
+            // Subtle overlay gradient
+            LinearGradient(
+                colors: [
+                    interpolateColor(colors[1], colors[3], phase: colorPhase).opacity(intensity * 0.3),
+                    Color.clear,
+                    interpolateColor(colors[0], colors[2], phase: colorPhase).opacity(intensity * 0.2)
+                ],
+                startPoint: animateGradient ? .topTrailing : .bottomLeading,
+                endPoint: animateGradient ? .bottomLeading : .topTrailing
+            )
         }
-        .blendMode(.screen)
         .ignoresSafeArea()
     }
-}
-
-struct SimpleAuroraFlow: View {
-    let color1: Color
-    let color2: Color
-    let intensity: Double
-    let index: Int
-    let animateGradient: Bool
-    let fadePhase: Double
     
-    var body: some View {
-        let positions: [UnitPoint] = [.topLeading, .topTrailing, .bottomLeading, .bottomTrailing]
-        let position = positions[index]
-        
-        RadialGradient(
-            colors: [
-                color1.opacity(intensity * (0.8 + fadePhase * 0.6)),
-                color2.opacity(intensity * (0.6 + fadePhase * 0.4)),
-                color1.opacity(intensity * (0.3 + fadePhase * 0.2)),
-                Color.clear
-            ],
-            center: position,
-            startRadius: 50,
-            endRadius: 400 + fadePhase * 200
-        )
-        .scaleEffect(animateGradient ? 1.3 : 0.8)
-        .opacity(0.7 + fadePhase * 0.3)
-        .offset(
-            x: animateGradient ? CGFloat(index * 30 - 45) : CGFloat(index * -30 + 45),
-            y: animateGradient ? CGFloat(index * 20 - 30) : CGFloat(index * -20 + 30)
+    // Helper function to interpolate between colors
+    private func interpolateColor(_ color1: Color, _ color2: Color, phase: Double) -> Color {
+        // Simple color interpolation - in a real app you'd want more sophisticated color mixing
+        let t = (sin(phase * .pi * 2) + 1) / 2 // Convert to 0-1 range
+        return Color(
+            red: Double(color1.components.red * (1 - t) + color2.components.red * t),
+            green: Double(color1.components.green * (1 - t) + color2.components.green * t),
+            blue: Double(color1.components.blue * (1 - t) + color2.components.blue * t)
         )
     }
 }
 
-struct SimpleAtmosphericGlow: View {
-    let colors: [Color]
-    let intensity: Double
-    let fadePhase: Double
-    
-    var body: some View {
-        ZStack {
-            ForEach(0..<3, id: \.self) { index in
-                let color = colors[index % colors.count]
-                let positions: [UnitPoint] = [.center, .top, .bottom]
-                let position = positions[index]
-                
-                RadialGradient(
-                    colors: [
-                        color.opacity(intensity * (0.4 + fadePhase * 0.3)),
-                        color.opacity(intensity * (0.2 + fadePhase * 0.1)),
-                        Color.clear
-                    ],
-                    center: position,
-                    startRadius: 100,
-                    endRadius: 350 + fadePhase * 100
-                )
-            }
-        }
-        .scaleEffect(0.9 + fadePhase * 0.2)
-        .opacity(0.6 + fadePhase * 0.4)
+// Extension to get color components (simplified)
+extension Color {
+    var components: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
+        let uiColor = UIColor(self)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        return (red, green, blue, alpha)
     }
 }
 
