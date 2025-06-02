@@ -816,7 +816,7 @@ struct InfoView: View {
                                         .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.5), value: isVisible)
                                     
                                     // App story
-                                    Text("This summer I decided to fix the three main problems with myself: I was a washed radiant, I was fat, and I had no projects on my portfolio. I created this app to keep myself accountable, be something I would actually use daily to help stay organized, and teach myself SwiftUI.")
+                                    Text("The summer after my 3rd year of uni I decided to fix the three main problems with myself: I was a washed radiant, I was fat, and I had no good projects on my portfolio. I created this app to keep myself accountable, be something I would actually use daily to help stay organized, and teach myself SwiftUI.")
                                         .font(.body)
                                         .foregroundColor(.white.opacity(0.9))
                                         .lineSpacing(6)
