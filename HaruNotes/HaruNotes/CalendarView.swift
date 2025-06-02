@@ -83,21 +83,6 @@ struct CalendarView: View {
                             }
                             .padding(.horizontal, 24)
                             .padding(.top, 20)
-                            
-                            // Calendar title with gradient
-                            Text("Calendar")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [.white, .cyan.opacity(0.8)],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
-                                .opacity(isVisible ? 1.0 : 0.0)
-                                .offset(y: isVisible ? 0 : -20)
-                                .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.3), value: isVisible)
                         }
                         
                         // Month navigation in glassy card
@@ -119,8 +104,7 @@ struct CalendarView: View {
                                 Spacer()
                                 
                                 Text(dateFormatter.string(from: currentDate))
-                                    .font(.title2)
-                                    .fontWeight(.bold)
+                                    .font(.system(size: 28, weight: .semibold, design: .rounded))
                                     .foregroundStyle(
                                         LinearGradient(
                                             colors: [.white, .cyan.opacity(0.8)],

@@ -136,10 +136,31 @@ struct ProgressButton: View {
                         .fill(isCompleted ? completedColor.opacity(0.3) : accentColor.opacity(0.2))
                         .frame(width: 28, height: 28)
                     
-                    Image(systemName: isCompleted ? "checkmark" : icon)
-                        .foregroundColor(isCompleted ? completedColor : accentColor)
-                        .font(.caption)
-                        .fontWeight(.semibold)
+                    if isCompleted {
+                        // Show both original icon and checkmark when completed
+                        ZStack {
+                            Image(systemName: icon)
+                                .foregroundColor(completedColor.opacity(0.7))
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                            
+                            Image(systemName: "checkmark")
+                                .foregroundColor(completedColor)
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .offset(x: 8, y: -8)
+                                .background(
+                                    Circle()
+                                        .fill(.black.opacity(0.3))
+                                        .frame(width: 12, height: 12)
+                                )
+                        }
+                    } else {
+                        Image(systemName: icon)
+                            .foregroundColor(accentColor)
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                    }
                 }
                 .scaleEffect(isPressed ? 1.1 : 1.0)
                 

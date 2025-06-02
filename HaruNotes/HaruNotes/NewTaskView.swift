@@ -16,12 +16,6 @@ struct NewTaskView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Beautiful ambient glassy background
-                GlassyBackground(
-                    colors: [.blue, .cyan, .teal, .mint],
-                    intensity: 0.3
-                )
-                
                 VStack(spacing: 0) {
                     Spacer()
                     
@@ -75,7 +69,7 @@ struct NewTaskView: View {
                                     }
                                     
                                     Text("New Task")
-                                        .font(.title3)
+                                        .font(.system(.title3, design: .rounded))
                                         .fontWeight(.semibold)
                                         .foregroundStyle(
                                             LinearGradient(
@@ -142,7 +136,7 @@ struct NewTaskView: View {
                                     Image(systemName: "textformat")
                                         .foregroundColor(.cyan)
                                         .font(.caption)
-                                    Text("Task Title")
+                                    Text("Title")
                                         .font(.caption)
                                         .foregroundColor(.white.opacity(0.8))
                                 }
