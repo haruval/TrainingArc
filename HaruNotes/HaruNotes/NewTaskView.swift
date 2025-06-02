@@ -69,7 +69,7 @@ struct NewTaskView: View {
                                     }
                                     
                                     Text("New Task")
-                                        .font(.title3)
+                                        .font(.system(.title3, design: .rounded))
                                         .fontWeight(.semibold)
                                         .foregroundStyle(
                                             LinearGradient(
@@ -136,7 +136,7 @@ struct NewTaskView: View {
                                     Image(systemName: "textformat")
                                         .foregroundColor(.cyan)
                                         .font(.caption)
-                                    Text("Task Title")
+                                    Text("Title")
                                         .font(.caption)
                                         .foregroundColor(.white.opacity(0.8))
                                 }

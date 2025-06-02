@@ -67,7 +67,7 @@ struct NewNoteView: View {
                                     }
                                     
                                     Text("New Note")
-                                        .font(.title3)
+                                        .font(.system(.title3, design: .rounded))
                                         .fontWeight(.semibold)
                                         .foregroundStyle(
                                             LinearGradient(

@@ -750,7 +750,7 @@ struct InfoView: View {
                                     }
                                     
                                     Text("About")
-                                        .font(.title3)
+                                        .font(.system(.title3, design: .rounded))
                                         .fontWeight(.semibold)
                                         .foregroundStyle(
                                             LinearGradient(
@@ -826,6 +826,13 @@ struct InfoView: View {
                                         .opacity(isVisible ? 1 : 0)
                                         .offset(y: isVisible ? 0 : 30)
                                         .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.6), value: isVisible)
+                                    
+                                    // Divider before Connect section
+                                    Divider()
+                                        .background(.white.opacity(0.2))
+                                        .padding(.horizontal, 24)
+                                        .opacity(isVisible ? 1 : 0)
+                                        .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.65), value: isVisible)
                                     
                                     // Social media links section
                                     VStack(alignment: .leading, spacing: 16) {
