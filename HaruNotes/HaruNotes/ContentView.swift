@@ -556,7 +556,7 @@ struct NoteDetailView: View {
                                     }
                                     
                                     Text(note.title)
-                                        .font(.title3)
+                                        .font(.system(.title3, design: .rounded))
                                         .fontWeight(.semibold)
                                         .foregroundStyle(
                                             LinearGradient(
@@ -592,23 +592,43 @@ struct NoteDetailView: View {
                                     }
                             )
                             
-                            // Note metadata
-                            HStack {
-                                Text("Created:")
-                                    .font(.caption)
-                                    .foregroundColor(.white.opacity(0.8))
-                                Spacer()
-                                Text(note.dateCreated, style: .date)
-                                    .font(.caption)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.white.opacity(0.8))
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(.ultraThinMaterial, in: Capsule())
-                                    .overlay(
-                                        Capsule()
-                                            .stroke(.white.opacity(0.2), lineWidth: 1)
-                                    )
+                            // Note metadata - Date and Time
+                            VStack(spacing: 8) {
+                                HStack {
+                                    Text("Created:")
+                                        .font(.caption)
+                                        .foregroundColor(.white.opacity(0.8))
+                                    Spacer()
+                                    Text(note.dateCreated, style: .date)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.white.opacity(0.8))
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(.ultraThinMaterial, in: Capsule())
+                                        .overlay(
+                                            Capsule()
+                                                .stroke(.white.opacity(0.2), lineWidth: 1)
+                                        )
+                                }
+                                
+                                HStack {
+                                    Text("Time:")
+                                        .font(.caption)
+                                        .foregroundColor(.white.opacity(0.8))
+                                    Spacer()
+                                    Text(note.dateCreated, style: .time)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.white.opacity(0.8))
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(.ultraThinMaterial, in: Capsule())
+                                        .overlay(
+                                            Capsule()
+                                                .stroke(.white.opacity(0.2), lineWidth: 1)
+                                        )
+                                }
                             }
                             .padding(.horizontal, 24)
                             .opacity(isVisible ? 1 : 0)
@@ -644,22 +664,6 @@ struct NoteDetailView: View {
                                 .offset(y: isVisible ? 0 : 30)
                                 .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.5), value: isVisible)
                             }
-                            
-                            // Time created
-                            HStack {
-                                Text("Time:")
-                                    .font(.caption)
-                                    .foregroundColor(.white.opacity(0.8))
-                                Spacer()
-                                Text(note.dateCreated, style: .time)
-                                    .font(.caption)
-                                    .foregroundColor(.white.opacity(0.8))
-                            }
-                            .padding(.horizontal, 24)
-                            .padding(.top, 16)
-                            .opacity(isVisible ? 1 : 0)
-                            .offset(y: isVisible ? 0 : 20)
-                            .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.6), value: isVisible)
                             
                             // Bottom spacing
                             Spacer()
@@ -790,11 +794,15 @@ struct InfoView: View {
                                             .font(.body)
                                             .foregroundColor(.white.opacity(0.9))
                                             .lineSpacing(4)
+                                            .multilineTextAlignment(.leading)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
                                         
                                         Text("CS + CTD student at CU Boulder.")
                                             .font(.body)
                                             .foregroundColor(.white.opacity(0.9))
                                             .lineSpacing(4)
+                                            .multilineTextAlignment(.leading)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
                                     }
                                     .padding(.horizontal, 24)
                                     .opacity(isVisible ? 1 : 0)
@@ -812,6 +820,8 @@ struct InfoView: View {
                                         .font(.body)
                                         .foregroundColor(.white.opacity(0.9))
                                         .lineSpacing(6)
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                         .padding(.horizontal, 24)
                                         .opacity(isVisible ? 1 : 0)
                                         .offset(y: isVisible ? 0 : 30)
