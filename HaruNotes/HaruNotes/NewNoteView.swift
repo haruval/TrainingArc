@@ -5,43 +5,115 @@ struct NewNoteView: View {
     @Environment(\.dismiss) var dismiss
     @FocusState private var isTextFieldFocused: Bool
 
+    @State private var noteTitle: String = ""
     @State private var noteText: String = ""
     @State private var dragOffset: CGFloat = 0
     @State private var keyboardHeight: CGFloat = 0
+    @State private var isVisible = false
 
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Completely transparent background
-                Color.clear
-                    .ignoresSafeArea(.all)
+                // Beautiful ambient glassy background
+                GlassyBackground(
+                    colors: [.orange, .red, .pink, .purple],
+                    intensity: 0.3
+                )
                 
                 VStack(spacing: 0) {
-                    Spacer() // Push glassy interface to bottom
+                    Spacer()
                     
-                    // Glassy note entry interface
+                    // Enhanced glassy note entry interface
                     ZStack {
-                        // Glassy frosted background for the text entry area
-                        RoundedRectangle(cornerRadius: 20)
+                        // Main glassy background with enhanced blur
+                        RoundedRectangle(cornerRadius: 24)
                             .fill(.ultraThinMaterial)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                                RoundedRectangle(cornerRadius: 24)
+                                    .stroke(
+                                        LinearGradient(
+                                            colors: [.white.opacity(0.4), .orange.opacity(0.2)],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ),
+                                        lineWidth: 1.5
+                                    )
                             )
-                            .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
+                            .shadow(color: .orange.opacity(0.2), radius: 30, x: 0, y: 15)
+                            .shadow(color: .black.opacity(0.4), radius: 20, x: 0, y: 10)
                         
                         VStack(spacing: 0) {
-                            // Draggable top bar - always visible
-                            VStack(spacing: 8) {
-                                // Drag handle
+                            // Elegant drag handle area
+                            VStack(spacing: 12) {
+                                // Refined drag handle
                                 Capsule()
-                                    .fill(Color.white.opacity(0.7))
-                                    .frame(width: 40, height: 4)
-                                    .padding(.top, 12)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [.white.opacity(0.8), .orange.opacity(0.6)],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .frame(width: 50, height: 5)
+                                    .shadow(color: .orange.opacity(0.3), radius: 4)
+                                    .padding(.top, 16)
                                 
-                                Spacer()
+                                // Header with enhanced styling
+                                HStack(spacing: 12) {
+                                    // Glowing note icon
+                                    ZStack {
+                                        Circle()
+                                            .fill(.orange.opacity(0.2))
+                                            .frame(width: 36, height: 36)
+                                        
+                                        Image(systemName: "note.text")
+                                            .foregroundColor(.orange)
+                                            .font(.title3)
+                                            .fontWeight(.semibold)
+                                    }
+                                    
+                                    Text("New Note")
+                                        .font(.title3)
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(
+                                            LinearGradient(
+                                                colors: [.white, .orange.opacity(0.8)],
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            )
+                                        )
+                                    
+                                    Spacer()
+                                    
+                                    // Enhanced save button
+                                    Button(action: {
+                                        withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                                            saveNoteIfNotEmpty()
+                                            dismiss()
+                                        }
+                                    }) {
+                                        ZStack {
+                                            Circle()
+                                                .fill(.green.opacity(0.2))
+                                                .frame(width: 36, height: 36)
+                                                .overlay(
+                                                    Circle()
+                                                        .stroke(.green.opacity(0.4), lineWidth: 1)
+                                                )
+                                            
+                                            Image(systemName: "checkmark")
+                                                .foregroundColor(.green)
+                                                .font(.title3)
+                                                .fontWeight(.bold)
+                                        }
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    .scaleEffect(isVisible ? 1.0 : 0.8)
+                                    .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.3), value: isVisible)
+                                }
+                                .padding(.horizontal, 24)
+                                .padding(.bottom, 8)
                             }
-                            .frame(height: 30)
                             .gesture(
                                 DragGesture()
                                     .onChanged { gesture in
@@ -51,111 +123,167 @@ struct NewNoteView: View {
                                     }
                                     .onEnded { gesture in
                                         if gesture.translation.height > 100 {
-                                            // If dragged down more than 100 points, dismiss
-                                            dismiss()
+                                            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                                                dismiss()
+                                            }
                                         } else {
-                                            // Snap back
-                                            withAnimation(.spring()) {
+                                            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                                                 dragOffset = 0
                                             }
                                         }
                                     }
                             )
                             
-                            // Note type indicator with save button
-                            HStack {
-                                Image(systemName: "note.text")
-                                    .foregroundColor(.orange)
-                                    .font(.title3)
-                                Text("New Note")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                Spacer()
+                            // Title input field
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Image(systemName: "textformat")
+                                        .foregroundColor(.cyan)
+                                        .font(.caption)
+                                    Text("Title")
+                                        .font(.caption)
+                                        .foregroundColor(.white.opacity(0.8))
+                                }
+                                .padding(.horizontal, 24)
                                 
-                                // Green checkmark save button
-                                Button(action: {
-                                    saveNoteIfNotEmpty()
-                                    dismiss()
-                                }) {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(.green)
-                                        .font(.title2)
-                                        .fontWeight(.semibold)
-                                }
-                                .buttonStyle(PlainButtonStyle())
+                                TextField("Enter note title...", text: $noteTitle)
+                                    .foregroundColor(.white)
+                                    .font(.headline)
+                                    .padding(.horizontal, 24)
+                                    .padding(.vertical, 12)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(.ultraThinMaterial)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .stroke(.white.opacity(0.1), lineWidth: 1)
+                                            )
+                                    )
+                                    .padding(.horizontal, 20)
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.bottom, 10)
+                            .opacity(isVisible ? 1 : 0)
+                            .offset(y: isVisible ? 0 : 20)
+                            .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.4), value: isVisible)
                             
-                            // Main text input area
-                            TextEditor(text: $noteText)
-                                .focused($isTextFieldFocused)
-                                .scrollContentBackground(.hidden)
-                                .background(Color.clear)
-                                .foregroundColor(.white)
-                                .font(.body)
-                                .padding(.horizontal, 20)
-                                .padding(.top, 10)
-                                .onTapGesture {
-                                    // Ensure focus when tapped
-                                    isTextFieldFocused = true
+                            // Content text editor
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Image(systemName: "text.alignleft")
+                                        .foregroundColor(.cyan)
+                                        .font(.caption)
+                                    Text("Content")
+                                        .font(.caption)
+                                        .foregroundColor(.white.opacity(0.8))
                                 }
+                                .padding(.horizontal, 24)
+                                .padding(.top, 16)
+                                
+                                ZStack(alignment: .topLeading) {
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(.ultraThinMaterial)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 16)
+                                                .stroke(.white.opacity(0.1), lineWidth: 1)
+                                        )
+                                        .frame(minHeight: 120)
+                                    
+                                    TextEditor(text: $noteText)
+                                        .focused($isTextFieldFocused)
+                                        .scrollContentBackground(.hidden)
+                                        .background(Color.clear)
+                                        .foregroundColor(.white)
+                                        .font(.body)
+                                        .padding(16)
+                                        .onTapGesture {
+                                            isTextFieldFocused = true
+                                        }
+                                    
+                                    if noteText.isEmpty && !isTextFieldFocused {
+                                        Text("Write your note here...")
+                                            .foregroundColor(.white.opacity(0.5))
+                                            .font(.body)
+                                            .padding(.horizontal, 20)
+                                            .padding(.vertical, 24)
+                                            .allowsHitTesting(false)
+                                    }
+                                }
+                                .padding(.horizontal, 20)
+                            }
+                            .opacity(isVisible ? 1 : 0)
+                            .offset(y: isVisible ? 0 : 30)
+                            .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.5), value: isVisible)
                             
-                            // Bottom spacer to accommodate keyboard
+                            // Bottom spacing
                             Spacer()
-                                .frame(height: keyboardHeight > 0 ? 10 : 0)
+                                .frame(height: max(20, keyboardHeight > 0 ? 20 : 40))
                         }
                     }
-                    .frame(height: keyboardHeight > 0 ? max(300, geometry.size.height - keyboardHeight - 100) : geometry.size.height * 0.85) // Better height calculation
-                    .cornerRadius(20)
+                    .frame(height: keyboardHeight > 0 ? 
+                           max(400, geometry.size.height - keyboardHeight - 60) : 
+                           geometry.size.height * 0.75)
                     .offset(y: dragOffset)
-                    // Position the interface above the keyboard while keeping drag bar visible
                     .offset(y: keyboardHeight > 0 ? -keyboardHeight + geometry.safeAreaInsets.bottom : 0)
+                    .scaleEffect(isVisible ? 1.0 : 0.95)
+                    .opacity(isVisible ? 1.0 : 0.0)
                 }
             }
         }
-        .background(Color.clear) // Ensure no background at all
-        .presentationBackground(.clear) // Make sheet background transparent
-        .presentationBackgroundInteraction(.enabled) // Allow interaction with background
+        .background(Color.clear)
+        .presentationBackground(.clear)
+        .presentationBackgroundInteraction(.enabled)
         .onAppear {
-            // Automatically focus text field to open keyboard with longer delay
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            withAnimation(.spring(response: 0.8, dampingFraction: 0.8)) {
+                isVisible = true
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                 isTextFieldFocused = true
             }
             
-            // Listen for keyboard notifications
-            NotificationCenter.default.addObserver(
-                forName: UIResponder.keyboardWillShowNotification,
-                object: nil,
-                queue: .main
-            ) { notification in
-                if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        keyboardHeight = keyboardFrame.height
-                    }
-                }
-            }
-            
-            NotificationCenter.default.addObserver(
-                forName: UIResponder.keyboardWillHideNotification,
-                object: nil,
-                queue: .main
-            ) { _ in
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    keyboardHeight = 0
-                }
-            }
+            setupKeyboardObservers()
         }
         .onDisappear {
-            // Clean up keyboard observers
-            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+            removeKeyboardObservers()
         }
     }
     
+    private func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillShowNotification,
+            object: nil,
+            queue: .main
+        ) { notification in
+            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    keyboardHeight = keyboardFrame.height
+                }
+            }
+        }
+        
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillHideNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            withAnimation(.easeInOut(duration: 0.3)) {
+                keyboardHeight = 0
+            }
+        }
+    }
+    
+    private func removeKeyboardObservers() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
     private func saveNoteIfNotEmpty() {
-        if !noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            store.addNote(title: "Quick Note", content: noteText)
+        let trimmedTitle = noteTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedContent = noteText.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if !trimmedContent.isEmpty || !trimmedTitle.isEmpty {
+            let finalTitle = trimmedTitle.isEmpty ? "Quick Note" : trimmedTitle
+            let finalContent = trimmedContent.isEmpty ? "No content" : trimmedContent
+            store.addNote(title: finalTitle, content: finalContent)
         }
     }
 }
