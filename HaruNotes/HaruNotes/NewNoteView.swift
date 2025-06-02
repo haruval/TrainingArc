@@ -14,12 +14,6 @@ struct NewNoteView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Beautiful ambient glassy background
-                GlassyBackground(
-                    colors: [.orange, .red, .pink, .purple],
-                    intensity: 0.3
-                )
-                
                 VStack(spacing: 0) {
                     Spacer()
                     

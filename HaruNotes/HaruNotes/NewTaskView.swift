@@ -16,12 +16,6 @@ struct NewTaskView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Beautiful ambient glassy background
-                GlassyBackground(
-                    colors: [.blue, .cyan, .teal, .mint],
-                    intensity: 0.3
-                )
-                
                 VStack(spacing: 0) {
                     Spacer()
                     
