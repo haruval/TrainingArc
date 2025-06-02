@@ -48,12 +48,11 @@ class DataStore: ObservableObject {
         let todayKey = dateKey(for: .today)
         var todayData = DayData()
         todayData.notes = [
-            Note(title: "Welcome to Training Arc", content: "This is your new notes and task management app. Stay organized and productive!"),
-            Note(title: "Today's Goals", content: "Focus on completing the project timeline and reviewing quarterly reports.")
+            Note(title: "stuff to work on in scrims", content: "midrounding pearl defense after starting backsite b (astra)")
         ]
         todayData.tasks = [
-            Task(title: "Review quarterly reports", content: "Go through Q3 financial reports and prepare summary", isCompleted: false, scheduledTime: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: baseDate)),
-            Task(title: "Call dentist", content: "Schedule cleaning appointment", isCompleted: false, scheduledTime: calendar.date(bySettingHour: 10, minute: 30, second: 0, of: baseDate))
+            Task(title: "submit something on canvas", content: "", isCompleted: false, scheduledTime: calendar.date(bySettingHour: 15, minute: 0, second: 0, of: baseDate)),
+            Task(title: "get boba", content: "", isCompleted: false, scheduledTime: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: baseDate))
         ]
         dayDataStore[todayKey] = todayData
         
@@ -61,25 +60,25 @@ class DataStore: ObservableObject {
         let yesterdayKey = dateKey(for: .yesterday)
         var yesterdayData = DayData()
         yesterdayData.notes = [
-            Note(title: "Meeting Notes", content: "Discussed project timeline and deliverables. Next steps: review mockups and finalize requirements."),
-            Note(title: "Ideas", content: "App features to consider: dark mode, cloud sync, reminders, categories.")
+            Note(title: "mistakes from scrims", content: "clueless ahh astra")
         ]
         yesterdayData.tasks = [
-            Task(title: "Buy groceries", content: "Milk, eggs, bread, apples", isCompleted: true, scheduledTime: calendar.date(bySettingHour: 9, minute: 0, second: 0, of: DatePage.yesterday.date())),
-            Task(title: "Finish presentation", content: "Complete slides for Monday's client meeting", isCompleted: true, scheduledTime: nil)
+            Task(title: "submit something else on canvas", content: "", isCompleted: true, scheduledTime: calendar.date(bySettingHour: 19, minute: 0, second: 0, of: DatePage.yesterday.date())),
+            Task(title: "write yesterday's essay idk", content: "", isCompleted: true, scheduledTime: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: DatePage.yesterday.date()))
         ]
         yesterdayData.rrButtonStruck = true
         yesterdayData.workoutButtonStruck = true
         dayDataStore[yesterdayKey] = yesterdayData
         
-        // Tomorrow's data (empty initially)
+        // Tomorrow's data
         let tomorrowKey = dateKey(for: .tomorrow)
         var tomorrowData = DayData()
         tomorrowData.notes = [
-            Note(title: "Tomorrow's Planning", content: "Prepare for the upcoming client presentation and team meeting.")
+            Note(title: "stuff to remember in scrims", content: "the art set play")
         ]
         tomorrowData.tasks = [
-            Task(title: "Team meeting", content: "Weekly standup at 9 AM", isCompleted: false, scheduledTime: calendar.date(bySettingHour: 9, minute: 0, second: 0, of: DatePage.tomorrow.date()))
+            Task(title: "submit lab on canvas", content: "", isCompleted: false, scheduledTime: calendar.date(bySettingHour: 22, minute: 0, second: 0, of: DatePage.tomorrow.date())),
+            Task(title: "go out for dinner", content: "", isCompleted: false, scheduledTime: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: DatePage.tomorrow.date()))
         ]
         dayDataStore[tomorrowKey] = tomorrowData
     }
