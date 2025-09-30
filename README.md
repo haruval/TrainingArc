@@ -1,7 +1,10 @@
 ## Showcase
-![img(1)](https://github.com/user-attachments/assets/e217ee65-daa7-4161-81fa-c7278f26aaf6)
-<img width="1206" height="2622" alt="2sim" src="https://github.com/user-attachments/assets/27db47a5-1870-4c20-b51a-dfe8f77ae391" />
-<img width="1206" height="2622" alt="3sim" src="https://github.com/user-attachments/assets/646eec80-2952-4825-b709-940349b89ca5" />
+<img width="600" alt="preview" src="https://github.com/user-attachments/assets/ddeaf87d-9db2-4432-9cae-8f2972554a22" /> <br />
+
+<img width="300" alt="1" src="https://github.com/user-attachments/assets/17b0c943-94a3-45b9-8372-01515d68c8c3" />
+
+<img width="300" alt="2" src="https://github.com/user-attachments/assets/27db47a5-1870-4c20-b51a-dfe8f77ae391" />
+<img width="300" alt="3" src="https://github.com/user-attachments/assets/646eec80-2952-4825-b709-940349b89ca5" />
 
 ## Video
 https://youtube.com/shorts/F-cWH9IORFg?feature=share
